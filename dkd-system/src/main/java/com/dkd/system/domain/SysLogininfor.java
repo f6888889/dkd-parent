@@ -1,14 +1,15 @@
 package com.dkd.system.domain;
 
-import java.util.Date;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.dkd.common.annotation.Excel;
 import com.dkd.common.annotation.Excel.ColumnType;
 import com.dkd.common.core.domain.BaseEntity;
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+import java.util.Date;
 
 /**
  * 系统访问记录表 sys_logininfor
- * 
+ *
  * @author ruoyi
  */
 public class SysLogininfor extends BaseEntity
@@ -51,6 +52,27 @@ public class SysLogininfor extends BaseEntity
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Excel(name = "访问时间", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss")
     private Date loginTime;
+
+    // 用户id
+    private Long userId;
+    // 部门id
+    private Long deptId;
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public Long getDeptId() {
+        return deptId;
+    }
+
+    public void setDeptId(Long deptId) {
+        this.deptId = deptId;
+    }
 
     public Long getInfoId()
     {

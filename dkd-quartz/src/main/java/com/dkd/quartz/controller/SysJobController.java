@@ -1,18 +1,5 @@
 package com.dkd.quartz.controller;
 
-import java.util.List;
-import javax.servlet.http.HttpServletResponse;
-import org.quartz.SchedulerException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import com.dkd.common.annotation.Log;
 import com.dkd.common.constant.Constants;
 import com.dkd.common.core.controller.BaseController;
@@ -26,10 +13,17 @@ import com.dkd.quartz.domain.SysJob;
 import com.dkd.quartz.service.ISysJobService;
 import com.dkd.quartz.util.CronUtils;
 import com.dkd.quartz.util.ScheduleUtils;
+import org.quartz.SchedulerException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 /**
  * 调度任务信息操作处理
- * 
+ *
  * @author ruoyi
  */
 @RestController
@@ -154,8 +148,13 @@ public class SysJobController extends BaseController
     @PutMapping("/changeStatus")
     public AjaxResult changeStatus(@RequestBody SysJob job) throws SchedulerException
     {
+        // 根据任务ID查询数据库，获取当前任务的配置信息
         SysJob newJob = jobService.selectJobById(job.getJobId());
+
+        // 将前端的状态设置到任务配置对象中
         newJob.setStatus(job.getStatus());
+
+        // 调用服务层的方法根据状态启动/暂停任务，并返回操作结果
         return toAjax(jobService.changeStatus(newJob));
     }
 

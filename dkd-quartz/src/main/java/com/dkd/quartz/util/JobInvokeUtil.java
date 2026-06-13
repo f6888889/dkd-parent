@@ -1,12 +1,13 @@
 package com.dkd.quartz.util;
 
+import com.dkd.common.utils.StringUtils;
+import com.dkd.common.utils.spring.SpringUtils;
+import com.dkd.quartz.domain.SysJob;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.LinkedList;
 import java.util.List;
-import com.dkd.common.utils.StringUtils;
-import com.dkd.common.utils.spring.SpringUtils;
-import com.dkd.quartz.domain.SysJob;
 
 /**
  * 任务执行工具
@@ -22,19 +23,28 @@ public class JobInvokeUtil
      */
     public static void invokeMethod(SysJob sysJob) throws Exception
     {
+        // 获取调用目标字符串，格式为beanName.methodName(params)
         String invokeTarget = sysJob.getInvokeTarget();
+        // 从调用目标中解析出bean的名称
         String beanName = getBeanName(invokeTarget);
+        // 从调用目标中解析出方法的名称
         String methodName = getMethodName(invokeTarget);
+        // 从调用目标中解析出方法的参数列表
         List<Object[]> methodParams = getMethodParams(invokeTarget);
 
+        // 检查bean名称是否为合法的类名
         if (!isValidClassName(beanName))
         {
+            // 如果不是类名，则从Spring容器中获取bean实例
             Object bean = SpringUtils.getBean(beanName);
+            // 调用方法
             invokeMethod(bean, methodName, methodParams);
         }
         else
         {
+            // 如果是类名，则通过反射创建实例
             Object bean = Class.forName(beanName).getDeclaredConstructor().newInstance();
+            // 调用方法
             invokeMethod(bean, methodName, methodParams);
         }
     }
@@ -50,21 +60,26 @@ public class JobInvokeUtil
             throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException,
             InvocationTargetException
     {
+        // 检查方法参数列表是否为空
         if (StringUtils.isNotNull(methodParams) && methodParams.size() > 0)
         {
+            // 获取方法对象，包括参数类型
             Method method = bean.getClass().getMethod(methodName, getMethodParamsType(methodParams));
+            // 调用方法，传入参数值
             method.invoke(bean, getMethodParamsValue(methodParams));
         }
         else
         {
+            // 获取无参数的方法对象
             Method method = bean.getClass().getMethod(methodName);
+            // 调用无参数的方法
             method.invoke(bean);
         }
     }
 
     /**
      * 校验是否为为class包名
-     * 
+     *
      * @param invokeTarget 名称
      * @return true是 false否
      */
@@ -75,7 +90,7 @@ public class JobInvokeUtil
 
     /**
      * 获取bean名称
-     * 
+     *
      * @param invokeTarget 目标字符串
      * @return bean名称
      */
@@ -87,7 +102,7 @@ public class JobInvokeUtil
 
     /**
      * 获取bean方法
-     * 
+     *
      * @param invokeTarget 目标字符串
      * @return method方法
      */
@@ -99,7 +114,7 @@ public class JobInvokeUtil
 
     /**
      * 获取method方法参数相关列表
-     * 
+     *
      * @param invokeTarget 目标字符串
      * @return method方法相关参数列表
      */
@@ -146,7 +161,7 @@ public class JobInvokeUtil
 
     /**
      * 获取参数类型
-     * 
+     *
      * @param methodParams 参数相关列表
      * @return 参数类型列表
      */
@@ -164,7 +179,7 @@ public class JobInvokeUtil
 
     /**
      * 获取参数值
-     * 
+     *
      * @param methodParams 参数相关列表
      * @return 参数值列表
      */
